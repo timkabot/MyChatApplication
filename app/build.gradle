@@ -36,6 +36,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:19.2.0'
     implementation 'com.google.firebase:firebase-auth:19.2.0'
     implementation 'com.firebaseui:firebase-ui-database:6.2.0'
+    implementation 'com.google.firebase:firebase-storage:19.1.0'
 
 
     implementation 'com.google.android.material:material:1.0.0'
@@ -44,5 +45,11 @@ dependencies {
     //image cropper
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
 
-    implementation 'com.google.firebase:firebase-storage:19.1.0'
+    //picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+    //image compression
+    implementation 'id.zelory:compressor:2.1.0'
+
+
 }
