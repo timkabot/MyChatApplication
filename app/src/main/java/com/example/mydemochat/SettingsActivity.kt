@@ -50,14 +50,12 @@ class SettingsActivity : AppCompatActivity() {
 
                 nameTextView.text = name
                 statusTextView.text = status
-                if (image != "defaul"){
+                if (image != "default"){
                     Picasso.get().load(image)
                         .networkPolicy(NetworkPolicy.OFFLINE)
                         .placeholder(R.drawable.default_avatar)
                         .into(circleImageView, object : Callback{
-                            override fun onSuccess() {
-                            }
-
+                            override fun onSuccess() {}
                             override fun onError(e: Exception?) {
                                 Picasso.get().load(image).placeholder(R.drawable.default_avatar).into(circleImageView)
                             }

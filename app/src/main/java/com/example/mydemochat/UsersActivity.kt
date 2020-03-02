@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.FirebaseDatabase
+import com.squareup.picasso.Callback
+import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_users.*
 import kotlinx.android.synthetic.main.card_user.view.*
@@ -69,9 +71,17 @@ class UsersActivity : AppCompatActivity() {
                 itemView.user_single_name.text = name
                 itemView.user_single_status.text = status
                 if(thumb_image != "default")
-                Picasso.get().load(thumb_image)
+                Picasso.get().load(image)
+                    .networkPolicy(NetworkPolicy.OFFLINE)
                     .placeholder(R.drawable.default_avatar)
-                    .into( itemView.user_single_image)
+                    .into( itemView.user_single_image, object : Callback {
+                        override fun onSuccess() {
+                        }
+
+                        override fun onError(e: Exception?) {
+                            Picasso.get().load(image).placeholder(R.drawable.default_avatar).into(itemView.user_single_image)
+                        }
+                    })
             }
         }
     }
