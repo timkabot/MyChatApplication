@@ -10,6 +10,7 @@ import androidx.appcompat.widget.Toolbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_register.*
 
 
@@ -61,12 +62,14 @@ class RegisterActivity : AppCompatActivity() {
                             mDatabase =
                                 FirebaseDatabase.getInstance().reference.child("Users").child(uid)
                         }
+                        val deviceToken : String = FirebaseInstanceId.getInstance().token.toString()
 
                         val userMap = HashMap<String, String>()
                         userMap["name"] = displayName
                         userMap["status"] = getString(R.string.default_status)
                         userMap["image"] = "default"
                         userMap["thumb_image"] = "default"
+                        userMap["device_token"] = deviceToken
 
                         mDatabase.setValue(userMap).addOnCompleteListener {
                             if (it.isSuccessful) {

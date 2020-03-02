@@ -38,14 +38,9 @@ class ProfileActivity : AppCompatActivity() {
         currentState = "not_friends"
         currentUser = FirebaseAuth.getInstance().currentUser!!
 
-
         progressDialog = ProgressDialog(this)
-        progressDialog.setTitle("Loading User Data")
-        progressDialog.setMessage("Please wait while we load user data")
-        progressDialog.setCanceledOnTouchOutside(false)
-        progressDialog.show()
 
-
+        showProgressDialog("Loading User Data", "Please wait while we load user data")
         initDatabaseReferences(userId)
 
 
@@ -100,14 +95,12 @@ class ProfileActivity : AppCompatActivity() {
                                         if(p0.hasChild(userId)){
                                             currentState = "friends"
                                             profile_send_req_btn.text = "Unfriend this person"
-
-
                                             hideDeclineButton()
                                         }
                                     }
-
                                 }
                             )
+                            hideDeclineButton()
                             progressDialog.dismiss()
 
                         }
@@ -152,19 +145,15 @@ class ProfileActivity : AppCompatActivity() {
                             createFriendRequest(userId, currentUser.uid,"received")
                                 .addOnSuccessListener {
                                         //friend request sent and recieved
-                                        val notificationData = HashMap<String, String>()
-                                        notificationData["from"] = currentUser.uid
-                                        notificationData["type"] = "request"
+                                        val notificationData =
+                                            hashMapOf("from" to currentUser.uid, "type" to "request")
 
-                                        mNotificationDatabase
-                                            .child(userId)
-                                            .push()
-                                            .setValue(notificationData)
-                                            .addOnSuccessListener {
-                                                currentState = "req_sent"
-                                                profile_send_req_btn.text = "Cancel Friend Request"
-                                                hideDeclineButton()
-                                            }
+                                        createNotification(userId, notificationData)
+                                        .addOnSuccessListener {
+                                            currentState = "req_sent"
+                                            profile_send_req_btn.text = "Cancel Friend Request"
+                                            hideDeclineButton()
+                                        }
                                 }
                         } else {
                             Toast.makeText(this, "Failed sending Request", Toast.LENGTH_SHORT)
@@ -249,4 +238,15 @@ class ProfileActivity : AppCompatActivity() {
         mNotificationDatabase = currentDatabase.child("Notifications")
     }
 
+    private fun showProgressDialog(title : String, message: String){
+        progressDialog.setTitle(title)
+        progressDialog.setMessage(message)
+        progressDialog.setCanceledOnTouchOutside(false)
+        progressDialog.show()
+    }
+
+    private fun createNotification(userId: String, notificationData : HashMap<String, String>) =  mNotificationDatabase
+        .child(userId)
+        .push()
+        .setValue(notificationData)
 }

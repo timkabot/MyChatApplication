@@ -7,12 +7,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
 
     lateinit var progressDialog: ProgressDialog
     lateinit var mAuth: FirebaseAuth
+    lateinit var mUserDatabase : DatabaseReference
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -25,6 +29,8 @@ class LoginActivity : AppCompatActivity() {
         supportActionBar?.title = "Login"
 
         progressDialog = ProgressDialog(this)
+
+        mUserDatabase = FirebaseDatabase.getInstance().reference.child("Users")
 
         login_account_button.setOnClickListener {
 
@@ -44,11 +50,20 @@ class LoginActivity : AppCompatActivity() {
     private fun loginUser(email: String, password: String) {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
+
                 progressDialog.dismiss()
-                val mainIntent = Intent(this, MainActivity::class.java)
-                mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                startActivity(mainIntent)
-                finish()
+                val currentUserId = mAuth.currentUser!!.uid
+                val deviceToken = FirebaseInstanceId.getInstance().token
+
+
+                addToken(currentUserId, deviceToken)
+                    .addOnSuccessListener {
+                        val mainIntent = Intent(this, MainActivity::class.java)
+                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        startActivity(mainIntent)
+                        finish()
+                    }
+
             } else {
                 progressDialog.hide()
                 Toast.makeText(
@@ -59,4 +74,8 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+    fun addToken(userId : String, deviceToken: String?) = mUserDatabase
+        .child(userId)
+        .child("device_token")
+        .setValue(deviceToken)
 }
