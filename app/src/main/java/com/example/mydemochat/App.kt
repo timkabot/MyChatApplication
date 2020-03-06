@@ -5,22 +5,41 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
 
 class App : Application() {
+
+    lateinit var mUserDatabase: DatabaseReference
+    lateinit var mAuth: FirebaseAuth
     override fun onCreate() {
         super.onCreate()
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
-
+        initDatabase()
         val builder = Picasso.Builder(this)
-        builder.downloader(OkHttp3Downloader(this, Long.MAX_VALUE as Long))
+        builder.downloader(OkHttp3Downloader(this, Long.MAX_VALUE))
         val built = builder.build()
         built.setIndicatorsEnabled(true)
         built.isLoggingEnabled = true
         Picasso.setSingletonInstance(built)
         createNotificationChannel()
+    }
+
+    private fun initDatabase(){
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+        mAuth = FirebaseAuth.getInstance()
+        mUserDatabase = FirebaseDatabase.getInstance().reference.child("Users").child(mAuth.currentUser!!.uid)
+
+        mUserDatabase.addValueEventListener(object : ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                mUserDatabase.child("online").onDisconnect().setValue(false)
+            }
+
+        })
     }
 
     private fun createNotificationChannel() {

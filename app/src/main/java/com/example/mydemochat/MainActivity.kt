@@ -7,19 +7,23 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
-    private var mAuth: FirebaseAuth? = null
+    private lateinit var mAuth: FirebaseAuth
     private lateinit var mSectionsPagerAdapter : SectionsPagesAdapter
-
+    private lateinit var mUserDatabase : DatabaseReference
+    private var currentUser : FirebaseUser? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mAuth = FirebaseAuth.getInstance()
-
+        mUserDatabase = FirebaseDatabase.getInstance().reference.child("Users").child(mAuth.currentUser!!.uid)
         setSupportActionBar(main_page_toolbar as Toolbar?)
         supportActionBar?.title = "Timur Chat"
 
@@ -34,14 +38,19 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = mAuth!!.currentUser
+        currentUser = mAuth.currentUser
         //updateUI(currentUser)
 
-        if (currentUser == null) {
-           sendToStart()
-        }
+        if (currentUser == null) sendToStart()
+        else mUserDatabase.child("online").setValue(true)
     }
 
+    override fun onStop() {
+        super.onStop()
+        currentUser?.let {
+            mUserDatabase.child("online").setValue(false)
+        }
+    }
     private fun sendToStart(){
         val startIntent = Intent(this, StartActivity::class.java)
         startActivity(startIntent)

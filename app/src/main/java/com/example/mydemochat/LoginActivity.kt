@@ -74,7 +74,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-    fun addToken(userId : String, deviceToken: String?) = mUserDatabase
+    private fun addToken(userId : String, deviceToken: String?) = mUserDatabase
         .child(userId)
         .child("device_token")
         .setValue(deviceToken)

@@ -178,4 +178,14 @@ class SettingsActivity : AppCompatActivity() {
                 }
             }
     }
+    override fun onStart() {
+        super.onStart()
+        mUserDatabase.child("online").setValue(true)
+
+    }
+    override fun onStop() {
+        super.onStop()
+        mUserDatabase.child("online").setValue(false)
+
+    }
 }
