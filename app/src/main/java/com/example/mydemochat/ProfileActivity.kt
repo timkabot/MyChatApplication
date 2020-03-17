@@ -247,15 +247,15 @@ class ProfileActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        currentUser?.let {
-            mUserDatabase.child("online").setValue(true)
+        currentUser.let {
+            mUserDatabase.child("online").setValue("true")
         }
 
     }
     override fun onStop() {
         super.onStop()
-        currentUser?.let {
-            mUserDatabase.child("online").setValue(false)
+        currentUser.let {
+            mUserDatabase.child("online").setValue(ServerValue.TIMESTAMP)
         }
     }
 }

@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ServerValue
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -23,7 +24,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mAuth = FirebaseAuth.getInstance()
-        mUserDatabase = FirebaseDatabase.getInstance().reference.child("Users").child(mAuth.currentUser!!.uid)
+
+        if(mAuth.currentUser != null){
+
+            mUserDatabase = FirebaseDatabase.getInstance().reference.child("Users").child(mAuth.currentUser!!.uid)
+        }
+
         setSupportActionBar(main_page_toolbar as Toolbar?)
         supportActionBar?.title = "Timur Chat"
 
@@ -42,13 +48,13 @@ class MainActivity : AppCompatActivity() {
         //updateUI(currentUser)
 
         if (currentUser == null) sendToStart()
-        else mUserDatabase.child("online").setValue(true)
+        else mUserDatabase.child("online").setValue("true")
     }
 
     override fun onStop() {
         super.onStop()
         currentUser?.let {
-            mUserDatabase.child("online").setValue(false)
+            mUserDatabase.child("online").setValue(ServerValue.TIMESTAMP)
         }
     }
     private fun sendToStart(){

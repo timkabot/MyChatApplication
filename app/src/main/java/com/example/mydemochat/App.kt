@@ -29,17 +29,21 @@ class App : Application() {
     private fun initDatabase(){
         FirebaseDatabase.getInstance().setPersistenceEnabled(true)
         mAuth = FirebaseAuth.getInstance()
-        mUserDatabase = FirebaseDatabase.getInstance().reference.child("Users").child(mAuth.currentUser!!.uid)
+        if(mAuth.currentUser != null)
+        {
+            mUserDatabase = FirebaseDatabase.getInstance().reference.child("Users").child(mAuth.currentUser!!.uid)
 
-        mUserDatabase.addValueEventListener(object : ValueEventListener{
-            override fun onCancelled(p0: DatabaseError) {
-            }
+            mUserDatabase.addValueEventListener(object : ValueEventListener{
+                override fun onCancelled(p0: DatabaseError) {
+                }
 
-            override fun onDataChange(p0: DataSnapshot) {
-                mUserDatabase.child("online").onDisconnect().setValue(false)
-            }
+                override fun onDataChange(p0: DataSnapshot) {
+                    mUserDatabase.child("online").onDisconnect().setValue(ServerValue.TIMESTAMP)
 
-        })
+                }
+
+            })
+        }
     }
 
     private fun createNotificationChannel() {

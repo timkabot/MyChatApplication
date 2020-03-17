@@ -86,32 +86,27 @@ class FriendsFragment : Fragment() {
 
                                 val builder = AlertDialog.Builder(context)
                                 builder.setTitle("Select options")
-                                builder.setItems(dialogOptions, object : DialogInterface.OnClickListener{
-                                    override fun onClick(p0: DialogInterface?, i: Int) {
-                                                when(i){
-                                                    0 -> {
-                                                        val profileIntent = Intent(context, ProfileActivity::class.java)
-                                                        profileIntent.putExtra("userId", userId)
-                                                        startActivity(profileIntent)
-                                                    }
-                                                    1 -> {
-                                                        val profileIntent = Intent(context, ProfileActivity::class.java)
-                                                        profileIntent.putExtra("userId", userId)
-                                                        startActivity(profileIntent)
-                                                    }
-                                                }
+                                builder.setItems(dialogOptions
+                                ) { _, i ->
+                                    when(i) {
+                                        0 -> {
+                                            val profileIntent = Intent(context, ProfileActivity::class.java)
+                                            profileIntent.putExtra("userId", userId)
+                                            startActivity(profileIntent)
+                                        }
+                                        1 -> {
+                                            val chatIntent = Intent(context, ChatActivity::class.java)
+                                            chatIntent.putExtra("userId", userId)
+                                            chatIntent.putExtra("userName", username)
+                                            startActivity(chatIntent)
+                                        }
                                     }
-
-                                })
+                                }
                                 builder.show()
                             }
-
-
                         }
-
                     })
                 }
-
             }
         }
         friends_list.adapter = firebaseRecyclerAdapter;

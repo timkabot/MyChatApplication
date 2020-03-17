@@ -50,6 +50,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".StartActivity" />
+        <activity android:name=".ChatActivity" android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>
