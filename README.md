@@ -1,6 +1,6 @@
 # MyChatApplication
 
-### One-to-one chat application based on Firebase, created for study purposes
+### One-to-one chat application based on Firebase, created for study purposes with no architecture included
 
 Functionality
 1) Listing all users
